@@ -1,6 +1,7 @@
 #include "ota.h"
 #include <WiFi.h>
 #include "secrets.h"
+#include "api.h"
 
 void connectToWiFi() {
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -14,18 +15,22 @@ void connectToWiFi() {
 
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     connectToWiFi();
 }
 
 void loop() {
 
+    bool success;
     // Check WiFi and perform OTA
     if (WiFi.status() == WL_CONNECTED) {
         performOTAUpdate();
+        success = sendData();
     } else {
         connectToWiFi();
     }
+
+    Serial.println(success ? "Data sent successfully!" : "Failed to send data.");
 
     delay(60000);  // Wait a minute between update checks
 }
